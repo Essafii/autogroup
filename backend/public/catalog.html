@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalogue Produits - Groupauto ERP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        // Redirection immédiate AVANT rendu si pas de token
+        (function(){
+            const token = localStorage.getItem('portalAccessToken');
+            if (!token) {
+                window.location.replace('login.html');
+            }
+        })();
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 0;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 102, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 102, 0, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 20px;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 102, 0, 0.1);
+            color: white;
+            transform: translateX(-3px);
+        }
+
+        .filters-section {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .search-box {
+            margin-bottom: 24px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 16px 24px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .search-box input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: rgba(255, 102, 0, 0.5);
+            box-shadow: 0 0 0 4px rgba(255, 102, 0, 0.1);
+        }
+
+        .filter-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .filter-item select {
+            width: 100%;
+            padding: 14px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .filter-item select:focus {
+            outline: none;
+            border-color: rgba(255, 102, 0, 0.5);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .product-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 24px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 102, 0, 0.05);
+            border-color: rgba(255, 102, 0, 0.3);
+            box-shadow: 0 20px 60px rgba(255, 102, 0, 0.15);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+        }
+
+        .product-info h3 {
+            color: white;
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .product-info p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9em;
+            margin-bottom: 12px;
+        }
+
+        .product-price {
+            color: #FF6600;
+            font-size: 1.4em;
+            font-weight: 800;
+        }
+
+        .no-products {
+            text-align: center;
+            padding: 80px 20px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 102, 0, 0.2);
+            border-top: 4px solid #FF6600;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 24px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+            <a href="index.html" style="color:white;text-decoration:none;font-weight:700">Groupauto</a>
+            <nav>
+                <a href="index.html" style="margin-right:12px;color:white;text-decoration:none">Accueil</a>
+                <a href="catalog.html" style="margin-right:0;color:#FF6600;text-decoration:none;font-weight:700">Auto-pièces</a>
+            </nav>
+        </header>
+        <div class="page-header">
+            <a href="index.html" class="back-btn">← Retour à l'accueil</a>
+        </div>
+
+        <div class="filters-section">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 Rechercher un produit...">
+            </div>
+            <div class="filter-row">
+                <div class="filter-item">
+                    <select id="familleFilter">
+                        <option value="">Toutes les familles</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <select id="sousFamilleFilter">
+                        <option value="">Toutes les sous-familles</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <select id="marqueFilter">
+                        <option value="">Toutes les marques</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="loading" class="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p style="color: rgba(255, 255, 255, 0.6);">Chargement des produits...</p>
+        </div>
+
+        <div id="no-products" class="no-products" style="display: none;">
+            <h2 style="color: white; margin-bottom: 12px;">Aucun produit trouvé</h2>
+            <p>Essayez de modifier vos critères de recherche</p>
+        </div>
+
+        <div id="productsGrid" class="products-grid"></div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8000';
+        let allProducts = [];
+
+        function requireAuth() {
+            // Gating avec token d'accès email+mot de passe
+            const token = localStorage.getItem('portalAccessToken');
+            if (!token) {
+                window.location.href = 'login.html';
+                return false;
+            }
+            return true;
+        }
+
+        async function loadProducts() {
+            if (!requireAuth()) return;
+            document.getElementById('loading').style.display = 'block';
+            try {
+                const response = await fetch(`${API_URL}/api/portal/catalog/articles`);
+                const data = await response.json();
+                allProducts = data.articles;
+                displayProducts(allProducts);
+                loadFilters(data.articles);
+            } catch (error) {
+                console.error('Erreur:', error);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function loadFilters(products) {
+            const familles = [...new Set(products.map(p => p.famille).filter(Boolean))];
+            const sousFamilles = [...new Set(products.map(p => p.sous_famille).filter(Boolean))];
+            const marques = [...new Set(products.map(p => p.marque).filter(Boolean))];
+
+            const familleSelect = document.getElementById('familleFilter');
+            familles.forEach(famille => {
+                const option = document.createElement('option');
+                option.value = famille;
+                option.textContent = famille;
+                familleSelect.appendChild(option);
+            });
+
+            const sousFamilleSelect = document.getElementById('sousFamilleFilter');
+            sousFamilles.forEach(sf => {
+                const option = document.createElement('option');
+                option.value = sf;
+                option.textContent = sf;
+                sousFamilleSelect.appendChild(option);
+            });
+
+            const marqueSelect = document.getElementById('marqueFilter');
+            marques.forEach(marque => {
+                const option = document.createElement('option');
+                option.value = marque;
+                option.textContent = marque;
+                marqueSelect.appendChild(option);
+            });
+        }
+
+        function displayProducts(products) {
+            const grid = document.getElementById('productsGrid');
+            const noProducts = document.getElementById('no-products');
+
+            if (products.length === 0) {
+                grid.style.display = 'none';
+                noProducts.style.display = 'block';
+                return;
+            }
+
+            grid.style.display = 'grid';
+            noProducts.style.display = 'none';
+
+            grid.innerHTML = products.map(product => `
+                <div class="product-card">
+                    <div class="product-image">🚗</div>
+                    <div class="product-info">
+                        <h3>${product.libelle || product.sku}</h3>
+                        <p>${product.marque || ''}</p>
+                        <div class="product-price">${formatCurrency(product.prix_public || 0)}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('fr-FR', { 
+                style: 'currency', 
+                currency: 'MAD' 
+            }).format(amount);
+        }
+
+        function filterProducts() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const famille = document.getElementById('familleFilter').value;
+            const sousFamille = document.getElementById('sousFamilleFilter').value;
+            const marque = document.getElementById('marqueFilter').value;
+
+            let filtered = allProducts.filter(p => {
+                const matchesSearch = !searchTerm || 
+                    (p.libelle && p.libelle.toLowerCase().includes(searchTerm)) ||
+                    (p.sku && p.sku.toLowerCase().includes(searchTerm));
+                
+                const matchesFamille = !famille || p.famille === famille;
+                const matchesSousFamille = !sousFamille || p.sous_famille === sousFamille;
+                const matchesMarque = !marque || p.marque === marque;
+
+                return matchesSearch && matchesFamille && matchesSousFamille && matchesMarque;
+            });
+
+            displayProducts(filtered);
+        }
+
+        document.getElementById('searchInput').addEventListener('input', filterProducts);
+        document.getElementById('familleFilter').addEventListener('change', filterProducts);
+        document.getElementById('sousFamilleFilter').addEventListener('change', filterProducts);
+        document.getElementById('marqueFilter').addEventListener('change', filterProducts);
+
+        loadProducts();
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+

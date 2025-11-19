@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - Portail Client</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #000, #1a1a1a); min-height: 100vh; margin: 0; display:flex; align-items:center; justify-content:center; }
+        .card { width: 100%; max-width: 460px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 28px; color: #fff; }
+        h1 { margin: 0 0 8px 0; font-size: 1.6em; }
+        p { margin: 0 0 20px 0; color: rgba(255,255,255,0.7); }
+        label { display:block; margin: 14px 0 8px; font-weight: 600; }
+        input { width:100%; padding:14px; border-radius:10px; border:1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.3); color:#fff; }
+        .row { display:flex; gap:10px; }
+        .btn { width:100%; margin-top:16px; padding:14px; border-radius:10px; border:0; background:#FF6600; color:#fff; font-weight:700; cursor:pointer; }
+        .muted { color: rgba(255,255,255,0.7); font-size: 0.9em; text-align:center; margin-top:10px; }
+        .link { color:#FF8533; text-decoration:none; font-weight:600; }
+        .code-inputs { display:flex; gap:8px; margin-top:10px; }
+        .code-inputs input { text-align:center; font-size:20px; letter-spacing: 2px; }
+        .back { display:inline-block; margin-bottom:14px; color: rgba(255,255,255,0.8); text-decoration:none; }
+        .error { color:#ffb4a6; margin-top:8px; min-height: 20px; }
+        .success { color:#b4ffce; margin-top:8px; min-height: 20px; }
+    </style>
+    <script>
+        const API_URL = 'http://localhost:8000';
+        async function login(e){
+            e.preventDefault();
+            setError(''); setSuccess('');
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const btn = e.submitter || document.querySelector('.btn');
+            if (btn) { btn.disabled = true; btn.textContent = 'Connexion...'; }
+            try{
+                const res = await fetch(`${API_URL}/api/auth/login`, { 
+                    method:'POST', 
+                    headers:{'Content-Type':'application/json'}, 
+                    body: JSON.stringify({ email, password }) 
+                });
+                const data = await res.json();
+                if(!res.ok){
+                    // Message clair pour identifiants invalides
+                    if (res.status === 401 || data?.code === 'INVALID_CREDENTIALS') {
+                        throw new Error('Email ou mot de passe incorrect');
+                    }
+                    if (res.status === 403 || data?.code === 'INSUFFICIENT_PERMISSIONS') {
+                        throw new Error('Accès refusé. Contactez l\'administrateur.');
+                    }
+                    throw new Error(data.error || 'Une erreur est survenue');
+                }
+                // Seuls les comptes activés par l'admin peuvent se connecter (is_active géré côté API)
+                localStorage.setItem('portalAccessToken', data.accessToken);
+                localStorage.setItem('portalUserEmail', data.user.email);
+                window.location.href = 'catalog.html';
+            }catch(err){ setError(err.message); }
+            finally { if (btn) { btn.disabled = false; btn.textContent = 'Se connecter'; } }
+        }
+        function setError(msg){ document.getElementById('error').textContent = msg; }
+        function setSuccess(msg){ document.getElementById('success').textContent = msg; }
+    </script>
+    </head>
+<body>
+    <div style="position:absolute;top:16px;left:16px;right:16px;display:flex;justify-content:space-between;align-items:center">
+        <a href="index.html" class="back">← Accueil</a>
+        <nav>
+            <a href="index.html" class="back">Accueil</a>
+            <a href="catalog.html" class="back" style="margin-left:12px;">Auto-pièces</a>
+        </nav>
+    </div>
+    <div class="card">
+        <a href="index.html" class="back">← Retour</a>
+        <h1>Connexion</h1>
+        <p>Connectez‑vous avec votre email et mot de passe (accès donné par l’administrateur).</p>
+        <form onsubmit="login(event)">
+            <label>Email</label>
+            <input id="email" type="email" placeholder="exemple@gmail.com" required>
+            <label>Mot de passe</label>
+            <input id="password" type="password" placeholder="••••••••" required>
+            <button class="btn" type="submit">Se connecter</button>
+        </form>
+        <div id="error" class="error"></div>
+        <div id="success" class="success"></div>
+        <p style="text-align:center; margin-top:20px; color:rgba(255,255,255,0.7); font-size:0.9em;">
+            Pour avoir un compte, <a href="index.html#contact" class="link">contactez l'administrateur</a>
+        </p>
+    </div>
+</body>
+</html>
+
+

@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suivi de Commande - Groupauto ERP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 0;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 102, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 102, 0, 0.08) 0%, transparent 50%);
+            animation: pulse 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header with back button */
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 20px;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 102, 0, 0.1);
+            color: white;
+            transform: translateX(-3px);
+        }
+
+        /* Main card */
+        .card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #FF6600 0%, #FF8533 100%);
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+            animation: shimmer 10s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .card-header h1 {
+            font-size: 2.5em;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+            letter-spacing: -1px;
+        }
+
+        .card-header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1em;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Search section */
+        .search-section {
+            padding: 40px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .search-box {
+            display: flex;
+            gap: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 18px 24px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .search-box input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: rgba(255, 102, 0, 0.5);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 4px rgba(255, 102, 0, 0.1);
+        }
+
+        .search-box button {
+            padding: 18px 40px;
+            background: linear-gradient(135deg, #FF6600 0%, #FF8533 100%);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 8px 24px rgba(255, 102, 0, 0.3);
+        }
+
+        .search-box button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(255, 102, 0, 0.4);
+        }
+
+        /* Content */
+        .content {
+            padding: 40px;
+        }
+
+        /* Order card */
+        .order-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-left: 4px solid #FF6600;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .order-card:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 102, 0, 0.05);
+            border-color: rgba(255, 102, 0, 0.3);
+            box-shadow: 0 20px 60px rgba(255, 102, 0, 0.15);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .order-number {
+            font-size: 1.8em;
+            font-weight: 800;
+            color: #FF6600;
+            letter-spacing: -0.5px;
+        }
+
+        .order-date {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.95em;
+        }
+
+        .status-badge {
+            padding: 10px 20px;
+            border-radius: 24px;
+            font-size: 0.85em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-validee {
+            background: rgba(40, 167, 69, 0.2);
+            color: #28a745;
+            border: 1px solid rgba(40, 167, 69, 0.3);
+        }
+
+        .status-livree {
+            background: rgba(0, 123, 255, 0.2);
+            color: #007bff;
+            border: 1px solid rgba(0, 123, 255, 0.3);
+        }
+
+        .status-facturee {
+            background: rgba(23, 162, 184, 0.2);
+            color: #17a2b8;
+            border: 1px solid rgba(23, 162, 184, 0.3);
+        }
+
+        .status-annulee {
+            background: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+            border: 1px solid rgba(220, 53, 69, 0.3);
+        }
+
+        .status-brouillon {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .order-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .detail-item {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+        }
+
+        .detail-label {
+            font-size: 0.85em;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 8px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-value {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: white;
+        }
+
+        /* Progress tracker */
+        .progress-tracker {
+            margin-top: 32px;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 1;
+        }
+
+        .step {
+            background: rgba(255, 255, 255, 0.05);
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+            font-weight: 700;
+            font-size: 0.95em;
+            color: rgba(255, 255, 255, 0.4);
+            transition: all 0.4s;
+        }
+
+        .step.active {
+            background: #FF6600;
+            color: white;
+            border-color: #FF6600;
+            box-shadow: 0 8px 24px rgba(255, 102, 0, 0.4);
+            transform: scale(1.1);
+        }
+
+        .step.completed {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+
+        .step-label {
+            font-size: 0.8em;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 500;
+        }
+
+        /* Loading and empty states */
+        .loading {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 102, 0, 0.2);
+            border-top: 4px solid #FF6600;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 24px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 80px 20px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .no-results svg {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 24px;
+            opacity: 0.3;
+        }
+
+        .no-results h2 {
+            color: white;
+            font-size: 1.5em;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .order-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-steps {
+                font-size: 0.7em;
+            }
+
+            .step {
+                width: 36px;
+                height: 36px;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+
+            .search-box button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+            <a href="index.html" style="color:white;text-decoration:none;font-weight:700">Groupauto</a>
+            <nav>
+                <a href="index.html" style="margin-right:12px;color:white;text-decoration:none">Accueil</a>
+                <a href="catalog.html" style="margin-right:0;color:white;text-decoration:none">Auto-pièces</a>
+            </nav>
+        </header>
+        <div class="page-header">
+            <a href="index.html" class="back-btn">← Retour</a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h1>📦 Suivi de Commande</h1>
+                <p>Groupauto ERP - Suivez l'avancement de vos commandes en temps réel</p>
+            </div>
+
+            <div class="search-section">
+                <div class="search-box">
+                    <input type="text" id="orderSearch" placeholder="Entrez le numéro de commande (ex: CMD-2025-001)" onkeypress="handleKeyPress(event)">
+                    <button type="button" onclick="searchOrder()">Rechercher</button>
+                </div>
+            </div>
+
+            <div class="content">
+                <div id="loading" class="loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p style="color: rgba(255, 255, 255, 0.6); font-weight: 500;">Chargement de la commande...</p>
+                </div>
+
+                <div id="no-results" class="no-results" style="display: none;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="M21 21l-4.35-4.35"></path>
+                    </svg>
+                    <h2>Aucune commande trouvée</h2>
+                    <p>Vérifiez que le numéro de commande est correct.</p>
+                </div>
+
+                <div id="orderDetails"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8000';
+
+        function getStatusInfo(status) {
+            const statusMap = {
+                'brouillon': { label: 'Brouillon', class: 'status-brouillon', step: 1 },
+                'validee': { label: 'Validée', class: 'status-validee', step: 2 },
+                'livree': { label: 'Livrée', class: 'status-livree', step: 3 },
+                'facturee': { label: 'Facturée', class: 'status-facturee', step: 4 },
+                'annulee': { label: 'Annulée', class: 'status-annulee', step: 0 }
+            };
+            return statusMap[status] || { label: status, class: 'status-brouillon', step: 1 };
+        }
+
+        function getStatusLabel(status) {
+            const labels = {
+                'brouillon': 'Brouillon',
+                'validee': 'Validée',
+                'livree': 'Livrée',
+                'facturee': 'Facturée',
+                'annulee': 'Annulée'
+            };
+            return labels[status] || status;
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('fr-FR', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('fr-FR', { 
+                style: 'currency', 
+                currency: 'MAD' 
+            }).format(amount);
+        }
+
+        function renderProgressTracker(status) {
+            const statusInfo = getStatusInfo(status);
+            const steps = ['Brouillon', 'Validée', 'Livrée', 'Facturée'];
+            const currentStep = statusInfo.step;
+
+            let html = '<div class="progress-tracker"><div class="progress-steps">';
+            
+            steps.forEach((stepName, index) => {
+                const stepNum = index + 1;
+                let stepClass = '';
+                let stepIcon = stepNum;
+                
+                if (status === 'annulee') {
+                    stepClass = '';
+                    stepIcon = '✕';
+                } else if (stepNum < currentStep) {
+                    stepClass = 'completed';
+                    stepIcon = '✓';
+                } else if (stepNum === currentStep) {
+                    stepClass = 'active';
+                }
+
+                html += `<div class="step ${stepClass}">${stepIcon}</div>`;
+            });
+
+            html += '</div><div style="display: flex; justify-content: space-between;">';
+            
+            steps.forEach(stepName => {
+                html += `<span class="step-label">${stepName}</span>`;
+            });
+            
+            html += '</div></div>';
+            
+            return html;
+        }
+
+        async function searchOrder() {
+            const orderNumber = document.getElementById('orderSearch').value.trim();
+            
+            if (!orderNumber) {
+                alert('Veuillez entrer un numéro de commande');
+                return;
+            }
+
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('no-results').style.display = 'none';
+            document.getElementById('orderDetails').innerHTML = '';
+
+            try {
+                const response = await fetch(`${API_URL}/api/portal/tracking/${orderNumber}`);
+                
+                if (!response.ok) {
+                    throw new Error('Commande non trouvée');
+                }
+
+                const order = await response.json();
+                renderOrder(order);
+
+            } catch (error) {
+                console.error('Erreur:', error);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('no-results').style.display = 'block';
+            }
+        }
+
+        function renderOrder(order) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('no-results').style.display = 'none';
+
+            const statusInfo = getStatusInfo(order.statut);
+
+            const html = `
+                <div class="order-card">
+                    <div class="order-header">
+                        <div>
+                            <div class="order-number">Commande ${order.numero}</div>
+                            <div class="order-date">Commandée le ${formatDate(order.date_commande)}</div>
+                        </div>
+                        <span class="status-badge ${statusInfo.class}">${statusInfo.label}</span>
+                    </div>
+
+                    <div class="order-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Montant HT</div>
+                            <div class="detail-value">${formatCurrency(order.montant_ht)}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">TVA</div>
+                            <div class="detail-value">${formatCurrency(order.montant_tva)}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Total TTC</div>
+                            <div class="detail-value">${formatCurrency(order.montant_ttc)}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Date de livraison souhaitée</div>
+                            <div class="detail-value" style="font-size: 1.1em;">${formatDate(order.date_livraison_souhaitee)}</div>
+                        </div>
+                    </div>
+
+                    ${renderProgressTracker(order.statut)}
+
+                    ${order.commentaire ? `
+                        <div style="margin-top: 24px; padding: 20px; background: rgba(255, 102, 0, 0.1); border-radius: 12px; border-left: 3px solid #FF6600;">
+                            <strong style="color: #FF6600;">Note:</strong> <span style="color: rgba(255, 255, 255, 0.8);">${order.commentaire}</span>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+
+            document.getElementById('orderDetails').innerHTML = html;
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                searchOrder();
+            }
+        }
+
+        document.getElementById('orderSearch').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchOrder();
+            }
+        });
+    </script>
+</body>
+</html>

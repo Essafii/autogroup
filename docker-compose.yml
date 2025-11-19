@@ -1,0 +1,104 @@
+services:
+  # Base de données PostgreSQL
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: groupauto_erp
+      POSTGRES_USER: groupauto
+      POSTGRES_PASSWORD: groupauto2025
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - groupauto-network
+
+  # API Backend
+  api:
+    build: ./backend
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://groupauto:groupauto2025@postgres:5432/groupauto_erp
+      JWT_SECRET: your-super-secret-jwt-key-here
+      REDIS_URL: redis://redis:6379
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./uploads:/app/uploads
+      - ./logs:/app/logs
+      - ./backend/public:/app/public
+    networks:
+      - groupauto-network
+
+  # Redis pour cache et sessions
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - groupauto-network
+
+  # Frontend Admin - TODO: Fixer le build npm
+  # admin-frontend:
+  #   build: ./frontend/admin
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     REACT_APP_API_URL: http://localhost:8000
+  #   depends_on:
+  #     - api
+  #   networks:
+  #     - groupauto-network
+
+  # Application Commerciale (PWA) - TODO: Implementer le code source
+  # commercial-app:
+  #   build: ./frontend/commercial
+  #   ports:
+  #     - "3001:3000"
+  #   environment:
+  #     REACT_APP_API_URL: http://localhost:8000
+  #   depends_on:
+  #     - api
+  #   networks:
+  #     - groupauto-network
+
+  # Portail Revendeurs (PWA) - TODO: Implementer le code source
+  # portal-frontend:
+  #   build: ./frontend/portal
+  #   ports:
+  #     - "3002:3000"
+  #   environment:
+  #     REACT_APP_API_URL: http://localhost:8000
+  #   depends_on:
+  #     - api
+  #   networks:
+  #     - groupauto-network
+
+  # Nginx pour reverse proxy
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - api
+    networks:
+      - groupauto-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  groupauto-network:
+    driver: bridge
+

@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portail Client - Groupauto ERP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --orange-primary: #FF6600;
+            --orange-gradient: linear-gradient(135deg, #FF6600 0%, #FF8533 100%);
+            --orange-dark: #E55A00;
+            --black: #1a1a1a;
+            --white: #ffffff;
+            --gray-light: #f8f9fa;
+            --gray-medium: #6c757d;
+            --gray-dark: #343a40;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 0;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background particles */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 102, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 102, 0, 0.08) 0%, transparent 50%);
+            animation: pulse 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Modern Glass Header */
+        header {
+            background: #ffffff; /* Barre de navigation blanche pour mieux afficher le logo */
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            border-radius: 20px;
+            padding: 20px 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo-icon {
+            width: 96px;
+            height: 96px;
+            background: transparent; /* suppression de l'orange derrière le logo */
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 44px;
+            box-shadow: none;
+            animation: float 3s ease-in-out infinite;
+            overflow: hidden;
+        }
+
+        .logo-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 6px;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .logo-text h1 {
+            color: var(--black); /* Titre sombre sur fond blanc */
+            font-size: 1.8em;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 4px;
+        }
+
+        .logo-text p {
+            color: var(--gray-dark); /* Sous-titre sombre sur fond blanc */
+            font-size: 0.9em;
+            font-weight: 400;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--black); /* Liens sombres sur fond blanc */
+            padding: 12px 24px;
+            border-radius: 12px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            font-size: 0.95em;
+            position: relative;
+            overflow: hidden;
+        }
+
+        nav a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 102, 0, 0.15), transparent);
+            transition: left 0.5s;
+        }
+
+        nav a:hover::before {
+            left: 100%;
+        }
+
+        nav a:hover {
+            background: rgba(255, 102, 0, 0.08);
+            color: var(--black);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 80px 60px;
+            margin-bottom: 40px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.8s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 102, 0, 0.1) 0%, transparent 70%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h2 {
+            color: var(--white);
+            font-size: 3.5em;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ffffff 0%, rgba(255, 102, 0, 0.8) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -2px;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.3em;
+            font-weight: 400;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        /* Features Grid */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 40px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out backwards;
+        }
+
+        .feature-card:nth-child(1) { animation-delay: 0.1s; }
+        .feature-card:nth-child(2) { animation-delay: 0.2s; }
+        .feature-card:nth-child(3) { animation-delay: 0.3s; }
+        .feature-card:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--orange-gradient);
+            transform: scaleX(0);
+            transition: transform 0.4s;
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            background: rgba(255, 102, 0, 0.05);
+            border-color: rgba(255, 102, 0, 0.2);
+            box-shadow: 0 20px 60px rgba(255, 102, 0, 0.2);
+        }
+
+        .feature-icon {
+            width: 72px;
+            height: 72px;
+            background: var(--orange-gradient);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            margin-bottom: 24px;
+            box-shadow: 0 12px 32px rgba(255, 102, 0, 0.3);
+            transition: all 0.4s;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: rotate(5deg) scale(1.1);
+            box-shadow: 0 16px 40px rgba(255, 102, 0, 0.4);
+        }
+
+        .feature-card h3 {
+            color: var(--white);
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .feature-card p {
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.7;
+            font-size: 0.98em;
+        }
+
+        .feature-card a {
+            display: inline-block;
+            margin-top: 16px;
+            padding: 10px 20px;
+            background: rgba(255, 102, 0, 0.2);
+            color: #FF6600;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+
+        .feature-card a:hover {
+            background: rgba(255, 102, 0, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* CTA Section */
+        .cta {
+            background: var(--orange-gradient);
+            border-radius: 24px;
+            padding: 60px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(255, 102, 0, 0.3);
+            animation: fadeIn 1s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta h3 {
+            color: var(--white);
+            font-size: 2.2em;
+            font-weight: 800;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+
+        .cta p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2em;
+            margin-bottom: 32px;
+            font-weight: 400;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 18px 48px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            letter-spacing: 0.3px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 40px;
+        }
+
+        footer p {
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        footer p:first-child {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .hero h2 {
+                font-size: 2.2em;
+            }
+
+            header {
+                padding: 20px;
+                flex-direction: column;
+                text-align: center;
+            }
+
+            nav ul {
+                justify-content: center;
+            }
+
+            .hero {
+                padding: 50px 30px;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .cta {
+                padding: 40px 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">
+                    <img src="assets/images/logo.png" alt="Groupauto" class="logo-image" onerror="this.style.display='none'; this.parentElement.innerHTML='🚗';">
+                </div>
+                <div class="logo-text">
+                    <h1>Groupauto</h1>
+                    <p>Portail Client</p>
+                </div>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Accueil</a></li>
+                    <li><a href="login.html">Auto-pièces</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <div class="hero">
+            <div class="hero-content">
+                <h2>Bienvenue sur votre<br>portail client</h2>
+                <p>Gérez vos commandes et suivez vos achats en temps réel</p>
+            </div>
+        </div>
+        <section style="background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 36px; color: rgba(255,255,255,0.88); line-height: 1.8; box-shadow: 0 12px 40px rgba(0,0,0,0.3); margin-bottom: 30px;">
+            <h3 style="margin:0 0 12px 0; color:#fff; font-size:1.6em; font-weight:800; letter-spacing:-0.5px;">À propos de Groupauto</h3>
+            <p style="margin:0 0 10px 0;">Spécialiste de la distribution de pièces détachées et équipements automobiles, Groupauto accompagne particuliers et professionnels avec un large catalogue multi‑marques, des prix compétitifs et un service de proximité.</p>
+            <p style="margin:0;">Notre réseau logistique et nos équipes assurent disponibilité, réactivité et conseil technique pour vous garantir la meilleure expérience d’achat et d’approvisionnement.</p>
+        </section>
+
+        <div id="contact" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-bottom: 40px; scroll-margin-top: 20px;">
+            <div style="background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 32px; box-shadow: 0 12px 40px rgba(0,0,0,0.3);">
+                <div style="width: 56px; height: 56px; background: var(--orange-gradient); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 20px; box-shadow: 0 8px 24px rgba(255, 102, 0, 0.3);">📍</div>
+                <h3 style="color: #fff; font-size: 1.3em; font-weight: 700; margin-bottom: 12px; letter-spacing: -0.5px;">Adresse</h3>
+                <p style="color: rgba(255,255,255,0.7); line-height: 1.8; margin: 0;">Rabat - Témara</p>
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 32px; box-shadow: 0 12px 40px rgba(0,0,0,0.3);">
+                <div style="width: 56px; height: 56px; background: var(--orange-gradient); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 20px; box-shadow: 0 8px 24px rgba(255, 102, 0, 0.3);">📞</div>
+                <h3 style="color: #fff; font-size: 1.3em; font-weight: 700; margin-bottom: 12px; letter-spacing: -0.5px;">Contact</h3>
+                <p style="color: rgba(255,255,255,0.7); line-height: 1.8; margin: 0;">
+                    <a href="tel:+212522123456" style="color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.3s;">+212 522 123 456</a><br>
+                    <a href="mailto:contact@groupauto.ma" style="color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.3s;">contact@groupauto.ma</a>
+                </p>
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 32px; box-shadow: 0 12px 40px rgba(0,0,0,0.3);">
+                <div style="width: 56px; height: 56px; background: var(--orange-gradient); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 20px; box-shadow: 0 8px 24px rgba(255, 102, 0, 0.3);">🕒</div>
+                <h3 style="color: #fff; font-size: 1.3em; font-weight: 700; margin-bottom: 12px; letter-spacing: -0.5px;">Horaires</h3>
+                <p style="color: rgba(255,255,255,0.7); line-height: 1.8; margin: 0;">
+                    Lundi - Vendredi: 8h00 - 18h00<br>
+                    Samedi: 9h00 - 13h00<br>
+                    Dimanche: Fermé
+                </p>
+            </div>
+        </div>
+        
+    </div>
+
+    <footer>
+        <p>© 2025 Groupauto ERP - Tous droits réservés</p>
+        <p>Système de gestion ERP pour concessionnaires automobiles</p>
+    </footer>
+</body>
+</html>

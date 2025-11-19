@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historique - Groupauto ERP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 0;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 102, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 102, 0, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 20px;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 102, 0, 0.1);
+            color: white;
+            transform: translateX(-3px);
+        }
+
+        .section-title {
+            color: white;
+            font-size: 1.8em;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .order-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-left: 4px solid #FF6600;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            transition: all 0.4s;
+            cursor: pointer;
+        }
+
+        .order-card:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 102, 0, 0.05);
+            border-color: rgba(255, 102, 0, 0.3);
+            box-shadow: 0 20px 60px rgba(255, 102, 0, 0.15);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .order-number {
+            font-size: 1.5em;
+            font-weight: 800;
+            color: #FF6600;
+        }
+
+        .order-date {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9em;
+        }
+
+        .status-badge {
+            padding: 10px 20px;
+            border-radius: 24px;
+            font-size: 0.85em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-validee {
+            background: rgba(40, 167, 69, 0.2);
+            color: #28a745;
+            border: 1px solid rgba(40, 167, 69, 0.3);
+        }
+
+        .status-livree {
+            background: rgba(0, 123, 255, 0.2);
+            color: #007bff;
+            border: 1px solid rgba(0, 123, 255, 0.3);
+        }
+
+        .status-facturee {
+            background: rgba(23, 162, 184, 0.2);
+            color: #17a2b8;
+            border: 1px solid rgba(23, 162, 184, 0.3);
+        }
+
+        .order-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .detail-item {
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+        }
+
+        .detail-label {
+            font-size: 0.85em;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .empty-state svg {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 24px;
+            opacity: 0.3;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 102, 0, 0.2);
+            border-top: 4px solid #FF6600;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 24px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+            <a href="index.html" style="color:white;text-decoration:none;font-weight:700">Groupauto</a>
+            <nav>
+                <a href="index.html" style="margin-right:12px;color:white;text-decoration:none">Accueil</a>
+                <a href="catalog.html" style="margin-right:0;color:white;text-decoration:none">Auto-pièces</a>
+            </nav>
+        </header>
+        <div class="page-header">
+            <div>
+                <a href="index.html" class="back-btn">← Retour</a>
+            </div>
+            <h1 class="section-title">Historique des Commandes</h1>
+        </div>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p style="color: rgba(255, 255, 255, 0.6);">Chargement de l'historique...</p>
+        </div>
+
+        <div id="empty-state" class="empty-state" style="display: none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <h2 style="color: white; margin-bottom: 12px;">Aucune commande</h2>
+            <p>Vous n'avez pas encore passé de commande</p>
+        </div>
+
+        <div id="ordersList"></div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8000';
+
+        function requireAuth() {
+            const token = localStorage.getItem('portalSessionToken');
+            if (!token) {
+                window.location.href = 'login.html';
+                return false;
+            }
+            return true;
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('fr-FR', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('fr-FR', { 
+                style: 'currency', 
+                currency: 'MAD' 
+            }).format(amount);
+        }
+
+        function getStatusClass(status) {
+            const statusMap = {
+                'validee': 'status-validee',
+                'livree': 'status-livree',
+                'facturee': 'status-facturee',
+                'annulee': 'status-annulee',
+                'brouillon': 'status-brouillon'
+            };
+            return statusMap[status] || 'status-brouillon';
+        }
+
+        function getStatusLabel(status) {
+            const labels = {
+                'brouillon': 'Brouillon',
+                'validee': 'Validée',
+                'livree': 'Livrée',
+                'facturee': 'Facturée',
+                'annulee': 'Annulée'
+            };
+            return labels[status] || status;
+        }
+
+        async function loadHistory() {
+            if (!requireAuth()) return;
+            try {
+                const response = await fetch(`${API_URL}/api/portal/clients/me/commandes`);
+                if (!response.ok) {
+                    throw new Error('Erreur de chargement');
+                }
+                
+                const data = await response.json();
+                renderOrders(data.commandes || []);
+            } catch (error) {
+                console.error('Erreur:', error);
+                renderOrders([]);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function renderOrders(orders) {
+            const ordersList = document.getElementById('ordersList');
+            const emptyState = document.getElementById('empty-state');
+
+            if (orders.length === 0) {
+                ordersList.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            ordersList.style.display = 'block';
+            emptyState.style.display = 'none';
+
+            ordersList.innerHTML = orders.map(order => `
+                <div class="order-card" onclick="window.location='tracking.html?order=${order.numero}'">
+                    <div class="order-header">
+                        <div>
+                            <div class="order-number">Commande ${order.numero}</div>
+                            <div class="order-date">Le ${formatDate(order.date_commande)}</div>
+                        </div>
+                        <span class="status-badge ${getStatusClass(order.statut)}">
+                            ${getStatusLabel(order.statut)}
+                        </span>
+                    </div>
+                    <div class="order-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Montant HT</div>
+                            <div class="detail-value">${formatCurrency(order.montant_ht || 0)}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">TVA</div>
+                            <div class="detail-value">${formatCurrency(order.montant_tva || 0)}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Total</div>
+                            <div class="detail-value" style="color: #FF6600;">${formatCurrency(order.montant_ttc || 0)}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        loadHistory();
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
