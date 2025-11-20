@@ -1,0 +1,30 @@
+.dashboard-page {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.status-en-cours {
+  background: rgba(255, 193, 7, 0.2);
+  color: #ffc107;
+  border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.status-livrée {
+  background: rgba(40, 167, 69, 0.2);
+  color: #28a745;
+  border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+.status-en-attente {
+  background: rgba(0, 123, 255, 0.2);
+  color: #007bff;
+  border: 1px solid rgba(0, 123, 255, 0.3);
+}

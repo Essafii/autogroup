@@ -1,0 +1,82 @@
+/* Commercial Components */
+
+.card {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 24px;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #333;
+}
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: #FF6600;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #E55A00;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #FF6600;
+  box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.1);
+}
+
+.error-message {
+  padding: 12px;
+  background: #ffebee;
+  border: 1px solid #f44336;
+  border-radius: 6px;
+  color: #c62828;
+  margin-bottom: 16px;
+}
+
+.page-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.page-subtitle {
+  color: #666;
+  margin-bottom: 24px;
+}
+

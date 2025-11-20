@@ -2,11 +2,7 @@ import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import '../styles/layout.css';
 
-interface LayoutProps {
-  children: React.ReactNode;
-}
-
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const Layout = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -17,29 +13,44 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     navigate('/login');
   };
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path) => {
+    return location.pathname === path;
+  };
 
   return (
-    <div className="admin-wrapper">
-      <header className="admin-header">
-        <h1>Groupauto ERP - Admin</h1>
-        <div className="admin-header-user">
-          <span>{user.email || 'Administrateur'}</span>
+    <div className="app-wrapper">
+      <header className="app-header">
+        <div className="app-header-logo">
+          <h1>Groupauto ERP</h1>
+          <span className="subtitle">Portail Revendeurs</span>
+        </div>
+        <div className="app-header-user">
+          <span>{user.email || 'Utilisateur'}</span>
           <button onClick={handleLogout}>Déconnexion</button>
         </div>
       </header>
 
-      <aside className="admin-sidebar">
+      <aside className="app-sidebar">
         <nav>
-          <ul className="admin-sidebar-nav">
+          <ul className="app-sidebar-nav">
             <li>
               <Link to="/dashboard" className={isActive('/dashboard') ? 'active' : ''}>
                 Dashboard
               </Link>
             </li>
             <li>
-              <Link to="/users" className={isActive('/users') ? 'active' : ''}>
-                Utilisateurs
+              <Link to="/orders" className={isActive('/orders') ? 'active' : ''}>
+                Commandes
+              </Link>
+            </li>
+            <li>
+              <Link to="/clients" className={isActive('/clients') ? 'active' : ''}>
+                Clients
+              </Link>
+            </li>
+            <li>
+              <Link to="/products" className={isActive('/products') ? 'active' : ''}>
+                Produits
               </Link>
             </li>
             <li>
@@ -51,7 +62,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </nav>
       </aside>
 
-      <main className="admin-main">
+      <main className="app-main">
         {children}
       </main>
     </div>
@@ -59,3 +70,4 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 };
 
 export default Layout;
+

@@ -1,0 +1,160 @@
+/* Layout Global - Groupauto ERP Portal */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #0a0a0a;
+  color: #ffffff;
+  overflow-x: hidden;
+}
+
+/* Header */
+.app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: #1a1a1a;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.app-header-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.app-header-logo h1 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+}
+
+.app-header-logo .subtitle {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 400;
+}
+
+.app-header-user {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.app-header-user span {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+}
+
+.app-header-user button {
+  padding: 8px 16px;
+  background: rgba(220, 53, 69, 0.2);
+  border: 1px solid rgba(220, 53, 69, 0.3);
+  border-radius: 6px;
+  color: #ffb4a6;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.app-header-user button:hover {
+  background: rgba(220, 53, 69, 0.3);
+}
+
+/* Sidebar */
+.app-sidebar {
+  position: fixed;
+  left: 0;
+  top: 64px;
+  width: 240px;
+  height: calc(100vh - 64px);
+  background: #141414;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 24px 0;
+  overflow-y: auto;
+  z-index: 999;
+}
+
+.app-sidebar-nav {
+  list-style: none;
+}
+
+.app-sidebar-nav li {
+  margin-bottom: 4px;
+}
+
+.app-sidebar-nav a {
+  display: flex;
+  align-items: center;
+  padding: 12px 24px;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  border-left: 3px solid transparent;
+}
+
+.app-sidebar-nav a:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+}
+
+.app-sidebar-nav a.active {
+  background: rgba(255, 102, 0, 0.1);
+  color: #FF6600;
+  border-left-color: #FF6600;
+}
+
+/* Main Content */
+.app-main {
+  margin-left: 240px;
+  margin-top: 64px;
+  min-height: calc(100vh - 64px);
+  padding: 32px;
+  background: #0a0a0a;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .app-sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+  }
+
+  .app-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .app-main {
+    margin-left: 0;
+    padding: 20px;
+  }
+
+  .app-header-logo h1 {
+    font-size: 1rem;
+  }
+
+  .app-header-logo .subtitle {
+    display: none;
+  }
+}
+

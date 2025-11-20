@@ -3,14 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/components.css';
 import './Login.css';
 
-const Login: React.FC = () => {
+const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
@@ -18,10 +18,9 @@ const Login: React.FC = () => {
     // Placeholder - no real API yet
     setTimeout(() => {
       setLoading(false);
-      // For now, just store a dummy token
-      localStorage.setItem('token', 'admin-token-placeholder');
-      localStorage.setItem('user', JSON.stringify({ email, nom: 'Admin', prenom: 'User' }));
-      navigate('/dashboard');
+      localStorage.setItem('token', 'commercial-token-placeholder');
+      localStorage.setItem('user', JSON.stringify({ email, nom: 'Commercial', prenom: 'User' }));
+      navigate('/orders');
     }, 1000);
   };
 
@@ -29,8 +28,8 @@ const Login: React.FC = () => {
     <div className="login-container">
       <div className="login-card">
         <div className="login-header">
-          <h1>Groupauto ERP</h1>
-          <p>Interface d'administration</p>
+          <h1>Connexion commerciale</h1>
+          <p>Groupauto ERP - Application Commerciale</p>
         </div>
         
         <form onSubmit={handleSubmit} className="login-form">
@@ -45,7 +44,7 @@ const Login: React.FC = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              placeholder="admin@groupauto.ma"
+              placeholder="commercial@groupauto.ma"
               disabled={loading}
             />
           </div>
@@ -79,3 +78,4 @@ const Login: React.FC = () => {
 };
 
 export default Login;
+

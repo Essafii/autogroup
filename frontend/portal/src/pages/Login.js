@@ -1,36 +1,53 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { API_BASE } from '../config';
 import '../styles/components.css';
 import './Login.css';
 
-const Login: React.FC = () => {
+const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
-    // Placeholder - no real API yet
-    setTimeout(() => {
+    try {
+      const response = await axios.post(`${API_BASE}/auth/login`, {
+        email,
+        password
+      });
+
+      if (response.data.accessToken) {
+        localStorage.setItem('token', response.data.accessToken);
+        if (response.data.user) {
+          localStorage.setItem('user', JSON.stringify(response.data.user));
+        }
+        navigate('/dashboard');
+      } else {
+        setError('Réponse invalide du serveur');
+      }
+    } catch (err) {
+      const errorMessage = err.response?.data?.error || 
+        err.message || 
+        'Email ou mot de passe incorrect';
+      setError(errorMessage);
+    } finally {
       setLoading(false);
-      // For now, just store a dummy token
-      localStorage.setItem('token', 'admin-token-placeholder');
-      localStorage.setItem('user', JSON.stringify({ email, nom: 'Admin', prenom: 'User' }));
-      navigate('/dashboard');
-    }, 1000);
+    }
   };
 
   return (
     <div className="login-container">
       <div className="login-card">
         <div className="login-header">
-          <h1>Groupauto ERP</h1>
-          <p>Interface d'administration</p>
+          <h1>Connexion revendeur</h1>
+          <p>Groupauto ERP - Portail Revendeurs</p>
         </div>
         
         <form onSubmit={handleSubmit} className="login-form">
@@ -45,7 +62,7 @@ const Login: React.FC = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              placeholder="admin@groupauto.ma"
+              placeholder="votre@email.com"
               disabled={loading}
             />
           </div>
@@ -70,9 +87,20 @@ const Login: React.FC = () => {
             disabled={loading}
             style={{ width: '100%', marginTop: '8px' }}
           >
-            {loading ? 'Connexion...' : 'Se connecter'}
+            {loading ? (
+              <>
+                <span className="spinner"></span>
+                Connexion...
+              </>
+            ) : (
+              'Se connecter'
+            )}
           </button>
         </form>
+
+        <div className="login-footer">
+          <p>Pour obtenir un compte, contactez l'administrateur</p>
+        </div>
       </div>
     </div>
   );
