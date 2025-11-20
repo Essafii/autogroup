@@ -8,7 +8,9 @@
     "dev": "nodemon src/server.js",
     "test": "jest",
     "migrate": "node src/database/migrate.js",
-    "seed": "node src/database/seed.js"
+    "seed": "node src/database/seed.js",
+    "init-db": "node scripts/init-db.js",
+    "sync-db": "node src/scripts/syncDatabase.js"
   },
   "dependencies": {
     "express": "^4.18.2",
