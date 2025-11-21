@@ -16,6 +16,7 @@ const commandeRoutes = require('./routes/commandes');
 const stockRoutes = require('./routes/stock');
 const rhepRoutes = require('./routes/rhep');
 const uploadRoutes = require('./routes/upload');
+const userRoutes = require('./routes/users');
 const { errorHandler } = require('./middleware/errorHandler');
 const { authenticateToken } = require('./middleware/auth');
 
@@ -72,6 +73,7 @@ app.use('/api/articles', authenticateToken, articleRoutes);
 app.use('/api/commandes', authenticateToken, commandeRoutes);
 app.use('/api/stock', authenticateToken, stockRoutes);
 app.use('/api/rhep', authenticateToken, rhepRoutes);
+app.use('/api/users', authenticateToken, userRoutes);
 
 // Documentation API
 if (process.env.NODE_ENV !== 'production') {

@@ -1,5 +1,6 @@
 const express = require('express');
 const { Client } = require('../models');
+const { Op } = require('sequelize');
 const Joi = require('joi');
 
 const router = express.Router();
@@ -255,6 +256,8 @@ router.delete('/:id', async (req, res, next) => {
 });
 
 module.exports = router;
+
+
 
 
 
